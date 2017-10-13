@@ -1,4 +1,4 @@
-FROM nouchka/hackmyresume-web
+FROM nouchka/hackmyresume-web as builder
 MAINTAINER Jean-Avit Promis "docker@katagena.com"
 LABEL org.label-schema.vcs-url="https://github.com/nouchka/japromis.katagena.com"
 LABEL version="latest"
@@ -15,9 +15,5 @@ COPY nginx.sh /nginx.sh
 COPY resume.json /usr/share/nginx/html/resume.json
 RUN /resume-start.sh
 
-RUN apt-get purge --auto-remove -y curl wkhtmltopdf && \
-	npm ls -gp --depth=0 | awk -F/ '/node_modules/ && !/\/npm$/ {print $NF}' | xargs npm -g rm && \
-	apt-get clean && \
-	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-CMD /nginx.sh
+FROM nginx
+COPY --from=builder /var/www/html /usr/share/nginx/html
