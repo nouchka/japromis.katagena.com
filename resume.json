@@ -138,9 +138,9 @@
       "name": "Langages",
       "keywords": [
         "PHP",
-        ".net",
+        "Javascript",
         "JAVA",
-        "Javascript"
+        ".net"
       ]
     }
   ],
@@ -154,6 +154,9 @@
       ]
     },
     {
+      "name": "Sustainable development/Permaculture"
+    },
+    {
       "name": "Rugby",
       "summary": ""
     },
@@ -165,9 +168,6 @@
     },
     {
       "name": "Museum/Art"
-    },
-    {
-      "name": "Sustainable development"
     }
   ],
   "languages": [
