@@ -10,8 +10,6 @@ ENV PHONE +33602030405
 ENV ADDRESS 25 Rue Delphin Loche
 
 COPY resume-start.sh /resume-start.sh
-COPY nginx.sh /nginx.sh
-
 COPY resume.json /usr/share/nginx/html/resume.json
 RUN /resume-start.sh
 
