@@ -3,7 +3,7 @@ MAINTAINER Jean-Avit Promis "docker@katagena.com"
 LABEL org.label-schema.vcs-url="https://github.com/nouchka/japromis.katagena.com"
 LABEL version="latest"
 
-ENV RESUME_JSON_URL https://raw.githubusercontent.com/nouchka/japromis.katagena.com/fr/resume.json
+ENV RESUME_JSON_URL https://raw.githubusercontent.com/nouchka/japromis.katagena.com/master/fr.json
 ENV OUTPUT_TEMPLATE kendall
 ENV EMAIL docker@katagena.com
 ENV PHONE +33602030405
