@@ -1,16 +1,15 @@
 fetch:
   image: nouchka/hackmyresume
-  command: curl -o /usr/share/nginx/html/resume.json https://raw.githubusercontent.com/nouchka/japromis.katagena.com/master/fr.json
+  command: curl -o /usr/share/nginx/html/resume.json https://raw.githubusercontent.com/nouchka/japromis.katagena.com/master/resume.json
   volumes:
     - /tmp/resume:/usr/share/nginx/html
 hackmyresume:
   image: nouchka/hackmyresume
   environment:
     - OUTPUT_TEMPLATE=onepage
-    - PHONE=+33602030405
-    - EMAIL=docker@katagena.com
-    - ADDRESS=25 Rue Delphin Loche
     - DISPLAY=unix$DISPLAY
+  env_file:
+    - .env
   volumes:
     - /tmp/.X11-unix:/tmp/.X11-unix
     - /tmp/resume:/usr/share/nginx/html
