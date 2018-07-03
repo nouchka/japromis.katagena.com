@@ -15,3 +15,7 @@ RUN /resume-start.sh
 
 FROM nginx
 COPY --from=builder /var/www/html /usr/share/nginx/html
+
+##Kubernetes port 5000
+RUN sed -i "s/80;/80;\n    listen\t 5000;/" /etc/nginx/conf.d/default.conf
+EXPOSE 5000
