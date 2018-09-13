@@ -1,8 +1,3 @@
-fetch:
-  image: nouchka/hackmyresume
-  command: curl -o /usr/share/nginx/html/resume.json https://raw.githubusercontent.com/nouchka/japromis.katagena.com/master/resume.json
-  volumes:
-    - /tmp/resume:/usr/share/nginx/html
 hackmyresume:
   image: nouchka/hackmyresume
   environment:
