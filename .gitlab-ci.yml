@@ -19,14 +19,24 @@
 # * review: REVIEW_DISABLED
 # * stop_review: REVIEW_DISABLED
 #
+# The sast and sast_dashboard jobs are executed to guarantee full compatibility
+# with the group security dashboard and the security reports with old runners.
+# If you use only runners with version 11.5 or above, you can disable the sast
+# job by setting the OLD_REPORTS_DISABLED environment variable. If you use only
+# runners with version below 11.5, you can disable the sast_dashboard job by
+# setting the NEW_REPORTS_DISABLED environment variable.
+# The sast_dashboard job will be removed in the future, when the sast job will
+# use the new reports syntax.
+#
 # In order to deploy, you must have a Kubernetes cluster configured either
 # via a project integration, or via group/project variables.
 # AUTO_DEVOPS_DOMAIN must also be set as a variable at the group or project
 # level, or manually added below.
 #
 # Continuous deployment to production is enabled by default.
-# If you want to deploy to staging first, or enable incremental rollouts,
-# set STAGING_ENABLED or INCREMENTAL_ROLLOUT_ENABLED environment variables.
+# If you want to deploy to staging first, set STAGING_ENABLED environment variable.
+# If you want to enable incremental rollout, either manual or time based,
+# set INCREMENTAL_ROLLOUT_MODE environment variable to "manual" or "timed".
 # If you want to use canary deployments, set CANARY_ENABLED environment variable.
 #
 # If Auto DevOps fails to detect the proper buildpack, or if you want to
@@ -48,9 +58,10 @@ variables:
   POSTGRES_ENABLED: "true"
   POSTGRES_DB: $CI_ENVIRONMENT_SLUG
 
-  KUBERNETES_VERSION: 1.8.6
-  HELM_VERSION: 2.6.1
-  GIT_SUBMODULE_STRATEGY: recursive
+  KUBERNETES_VERSION: 1.10.9
+  HELM_VERSION: 2.11.0
+
+  DOCKER_DRIVER: overlay2
 
 stages:
   - build
@@ -60,6 +71,10 @@ stages:
   - staging
   - canary
   - production
+  - incremental rollout 10%
+  - incremental rollout 25%
+  - incremental rollout 50%
+  - incremental rollout 100%
   - performance
   - cleanup
 
@@ -68,8 +83,6 @@ build:
   image: docker:stable-git
   services:
   - docker:stable-dind
-  variables:
-    DOCKER_DRIVER: overlay2
   script:
     - setup_docker
     - build
@@ -96,8 +109,6 @@ test:
 code_quality:
   stage: test
   image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
   allow_failure: true
   services:
     - docker:stable-dind
@@ -114,19 +125,19 @@ code_quality:
 
 license_management:
   stage: test
-  image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
+  image: 
+    name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
+    entrypoint: [""]
   allow_failure: true
-  services:
-    - docker:stable-dind
   script:
-    - setup_docker
     - license_management
   artifacts:
     paths: [gl-license-management-report.json]
   only:
-    - branches
+    refs:
+      - branches
+    variables:
+      - $GITLAB_FEATURES =~ /\blicense_management\b/
   except:
     variables:
       - $LICENSE_MANAGEMENT_DISABLED
@@ -134,8 +145,6 @@ license_management:
 performance:
   stage: performance
   image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
   allow_failure: true
   services:
     - docker:stable-dind
@@ -149,16 +158,14 @@ performance:
   only:
     refs:
       - branches
-    kubernetes: active
   except:
     variables:
       - $PERFORMANCE_DISABLED
+      - $KUBECONFIG == null
 
 sast:
   stage: test
   image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
   allow_failure: true
   services:
     - docker:stable-dind
@@ -168,16 +175,40 @@ sast:
   artifacts:
     paths: [gl-sast-report.json]
   only:
-    - branches
+    refs:
+      - branches
+    variables:
+      - $GITLAB_FEATURES =~ /\bsast\b/
   except:
     variables:
       - $SAST_DISABLED
+      - $OLD_REPORTS_DISABLED
+
+sast_dashboard:
+  stage: test
+  image: docker:stable
+  allow_failure: true
+  services:
+    - docker:stable-dind
+  script:
+    - setup_docker
+    - sast
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
+  only:
+    refs:
+      - branches
+    variables:
+      - $GITLAB_FEATURES =~ /\bsast\b/
+  except:
+    variables:
+      - $SAST_DISABLED
+      - $NEW_REPORTS_DISABLED
 
 dependency_scanning:
   stage: test
   image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
   allow_failure: true
   services:
     - docker:stable-dind
@@ -187,7 +218,10 @@ dependency_scanning:
   artifacts:
     paths: [gl-dependency-scanning-report.json]
   only:
-    - branches
+    refs:
+      - branches
+    variables:
+      - $GITLAB_FEATURES =~ /\bdependency_scanning\b/
   except:
     variables:
       - $DEPENDENCY_SCANNING_DISABLED
@@ -195,8 +229,6 @@ dependency_scanning:
 container_scanning:
   stage: test
   image: docker:stable
-  variables:
-    DOCKER_DRIVER: overlay2
   allow_failure: true
   services:
     - docker:stable-dind
@@ -206,7 +238,10 @@ container_scanning:
   artifacts:
     paths: [gl-container-scanning-report.json]
   only:
-    - branches
+    refs:
+      - branches
+    variables:
+      - $GITLAB_FEATURES =~ /\bcontainer_scanning\b/
   except:
     variables:
       - $CONTAINER_SCANNING_DISABLED
@@ -224,12 +259,14 @@ dast:
   only:
     refs:
       - branches
-    kubernetes: active
+    variables:
+      - $GITLAB_FEATURES =~ /\bdast\b/
   except:
     refs:
       - master
     variables:
       - $DAST_DISABLED
+      - $KUBECONFIG == null
 
 review:
   stage: review
@@ -238,7 +275,7 @@ review:
     - install_dependencies
     - download_chart
     - ensure_namespace
-    - install_tiller
+    - initialize_tiller
     - create_secret
     - deploy
     - persist_environment_url
@@ -251,12 +288,12 @@ review:
   only:
     refs:
       - branches
-    kubernetes: active
   except:
     refs:
       - master
     variables:
       - $REVIEW_DISABLED
+      - $KUBECONFIG == null
 
 stop_review:
   stage: cleanup
@@ -264,6 +301,7 @@ stop_review:
     GIT_STRATEGY: none
   script:
     - install_dependencies
+    - initialize_tiller
     - delete
   environment:
     name: review/$CI_COMMIT_REF_NAME
@@ -273,17 +311,12 @@ stop_review:
   only:
     refs:
       - branches
-    kubernetes: active
   except:
     refs:
       - master
     variables:
       - $REVIEW_DISABLED
-
-# Keys that start with a dot (.) will not be processed by GitLab CI.
-# Staging and canary jobs are disabled by default, to enable them
-# remove the dot (.) before the job name.
-# https://docs.gitlab.com/ee/ci/yaml/README.html#hidden-keys
+      - $KUBECONFIG == null
 
 # Staging deploys are disabled by default since
 # continuous deployment to production is enabled by default
@@ -298,18 +331,20 @@ staging:
     - install_dependencies
     - download_chart
     - ensure_namespace
-    - install_tiller
+    - initialize_tiller
     - create_secret
     - deploy
   environment:
     name: staging
-    url: http://$CI_PROJECT_PATH_SLUG-staging.$AUTO_DEVOPS_DOMAIN
+    url: http://$AUTO_DEVOPS_DOMAIN_STAGING
   only:
     refs:
       - master
-    kubernetes: active
     variables:
       - $STAGING_ENABLED
+  except:
+    variables:
+      - $KUBECONFIG == null
 
 # Canaries are also disabled by default, but if you want them,
 # and know what the downsides are, you can enable this by setting
@@ -322,19 +357,21 @@ canary:
     - install_dependencies
     - download_chart
     - ensure_namespace
-    - install_tiller
+    - initialize_tiller
     - create_secret
     - deploy canary
   environment:
     name: production
-    url: http://$CI_PROJECT_PATH_SLUG.$AUTO_DEVOPS_DOMAIN
+    url: http://$AUTO_DEVOPS_DOMAIN_PRODUCTION
   when: manual
   only:
     refs:
       - master
-    kubernetes: active
     variables:
       - $CANARY_ENABLED
+  except:
+    variables:
+      - $KUBECONFIG == null
 
 .production: &production_template
   stage: production
@@ -343,7 +380,7 @@ canary:
     - install_dependencies
     - download_chart
     - ensure_namespace
-    - install_tiller
+    - initialize_tiller
     - create_secret
     - deploy
     - delete canary
@@ -351,7 +388,7 @@ canary:
     - persist_environment_url
   environment:
     name: production
-    url: http://$CI_PROJECT_PATH_SLUG.$AUTO_DEVOPS_DOMAIN
+    url: http://$AUTO_DEVOPS_DOMAIN_PRODUCTION
   artifacts:
     paths: [environment_url.txt]
 
@@ -360,12 +397,13 @@ production:
   only:
     refs:
       - master
-    kubernetes: active
   except:
     variables:
       - $STAGING_ENABLED
       - $CANARY_ENABLED
       - $INCREMENTAL_ROLLOUT_ENABLED
+      - $INCREMENTAL_ROLLOUT_MODE
+      - $KUBECONFIG == null
 
 production_manual:
   <<: *production_template
@@ -374,24 +412,24 @@ production_manual:
   only:
     refs:
       - master
-    kubernetes: active
     variables:
       - $STAGING_ENABLED
       - $CANARY_ENABLED
   except:
     variables:
       - $INCREMENTAL_ROLLOUT_ENABLED
+      - $INCREMENTAL_ROLLOUT_MODE
+      - $KUBECONFIG == null
 
 # This job implements incremental rollout on for every push to `master`.
 
 .rollout: &rollout_template
-  stage: production
   script:
     - check_kube_domain
     - install_dependencies
     - download_chart
     - ensure_namespace
-    - install_tiller
+    - initialize_tiller
     - create_secret
     - deploy rollout $ROLLOUT_PERCENTAGE
     - scale stable $((100-ROLLOUT_PERCENTAGE))
@@ -399,56 +437,83 @@ production_manual:
     - persist_environment_url
   environment:
     name: production
-    url: http://$CI_PROJECT_PATH_SLUG.$AUTO_DEVOPS_DOMAIN
+    url: http://$AUTO_DEVOPS_DOMAIN_PRODUCTION
   artifacts:
     paths: [environment_url.txt]
 
-rollout 10%:
+.manual_rollout_template: &manual_rollout_template
   <<: *rollout_template
+  stage: production
+  when: manual
+  # This selectors are backward compatible mode with $INCREMENTAL_ROLLOUT_ENABLED (before 11.4)
+  only:
+    refs:
+      - master
+    variables:
+      - $INCREMENTAL_ROLLOUT_MODE == "manual"
+      - $INCREMENTAL_ROLLOUT_ENABLED
+  except:
+    variables:
+      - $INCREMENTAL_ROLLOUT_MODE == "timed"
+      - $KUBECONFIG == null
+
+.timed_rollout_template: &timed_rollout_template
+  <<: *rollout_template
+  when: delayed
+  start_in: 5 minutes
+  only:
+    refs:
+      - master
+    variables:
+      - $INCREMENTAL_ROLLOUT_MODE == "timed"
+  except:
+    variables:
+      - $KUBECONFIG == null
+
+timed rollout 10%:
+  <<: *timed_rollout_template
+  stage: incremental rollout 10%
   variables:
     ROLLOUT_PERCENTAGE: 10
-  when: manual
-  only:
-    refs:
-      - master
-    kubernetes: active
-    variables:
-      - $INCREMENTAL_ROLLOUT_ENABLED
 
-rollout 25%:
-  <<: *rollout_template
+timed rollout 25%:
+  <<: *timed_rollout_template
+  stage: incremental rollout 25%
   variables:
     ROLLOUT_PERCENTAGE: 25
-  when: manual
-  only:
-    refs:
-      - master
-    kubernetes: active
-    variables:
-      - $INCREMENTAL_ROLLOUT_ENABLED
 
-rollout 50%:
-  <<: *rollout_template
+timed rollout 50%:
+  <<: *timed_rollout_template
+  stage: incremental rollout 50%
   variables:
     ROLLOUT_PERCENTAGE: 50
-  when: manual
-  only:
-    refs:
-      - master
-    kubernetes: active
-    variables:
-      - $INCREMENTAL_ROLLOUT_ENABLED
+
+timed rollout 100%:
+  <<: *timed_rollout_template
+  <<: *production_template
+  stage: incremental rollout 100%
+  variables:
+    ROLLOUT_PERCENTAGE: 100
+
+rollout 10%:
+  <<: *manual_rollout_template
+  variables:
+    ROLLOUT_PERCENTAGE: 10
+
+rollout 25%:
+  <<: *manual_rollout_template
+  variables:
+    ROLLOUT_PERCENTAGE: 25
+
+rollout 50%:
+  <<: *manual_rollout_template
+  variables:
+    ROLLOUT_PERCENTAGE: 50
 
 rollout 100%:
+  <<: *manual_rollout_template
   <<: *production_template
-  when: manual
   allow_failure: false
-  only:
-    refs:
-      - master
-    kubernetes: active
-    variables:
-      - $INCREMENTAL_ROLLOUT_ENABLED
 
 # ---------------------------------------------------------------------------
 
@@ -464,12 +529,16 @@ rollout 100%:
   # Extract "MAJOR.MINOR" from CI_SERVER_VERSION and generate "MAJOR-MINOR-stable" for Security Products
   export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
 
-  function container_scanning() {
+  function registry_login() {
     if [[ -n "$CI_REGISTRY_USER" ]]; then
       echo "Logging to GitLab Container Registry with CI credentials..."
       docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
       echo ""
     fi
+  }
+
+  function container_scanning() {
+    registry_login
 
     docker run -d --name db arminc/clair-db:latest
     docker run -p 6060:6060 --link db:postgres -d --name clair --restart on-failure arminc/clair-local-scan:v2.0.1
@@ -493,15 +562,7 @@ rollout 100%:
   }
 
   function license_management() {
-    if echo $GITLAB_FEATURES |grep license_management > /dev/null ; then
-      # Extract "MAJOR.MINOR" from CI_SERVER_VERSION and generate "MAJOR-MINOR-stable"
-      LICENSE_MANAGEMENT_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-
-      docker run --volume "$PWD:/code" \
-                 "registry.gitlab.com/gitlab-org/security-products/license-management:$LICENSE_MANAGEMENT_VERSION" analyze /code
-    else
-      echo "License management is not available in your subscription"
-    fi
+    /run.sh analyze .
   }
 
   function sast() {
@@ -596,27 +657,64 @@ rollout 100%:
       secret_name=''
     fi
 
-    helm upgrade --install \
-      --wait \
-      --set service.enabled="$service_enabled" \
-      --set releaseOverride="$CI_ENVIRONMENT_SLUG" \
-      --set image.repository="$CI_APPLICATION_REPOSITORY" \
-      --set image.tag="$CI_APPLICATION_TAG" \
-      --set image.pullPolicy=IfNotPresent \
-      --set image.secrets[0].name="$secret_name" \
-      --set application.track="$track" \
-      --set application.database_url="$DATABASE_URL" \
-      --set service.url="$CI_ENVIRONMENT_URL" \
-      --set replicaCount="$replicas" \
-      --set postgresql.enabled="$postgres_enabled" \
-      --set postgresql.nameOverride="postgres" \
-      --set postgresql.postgresUser="$POSTGRES_USER" \
-      --set postgresql.postgresPassword="$POSTGRES_PASSWORD" \
-      --set postgresql.postgresDatabase="$POSTGRES_DB" \
-      --namespace="$KUBE_NAMESPACE" \
-      --version="$CI_PIPELINE_ID-$CI_JOB_ID" \
-      "$name" \
-      chart/
+    if [[ -n "$DB_INITIALIZE" && -z "$(helm ls -q "^$name$")" ]]; then
+      echo "Deploying first release with database initialization..."
+      helm upgrade --install \
+        --wait \
+        --set service.enabled="$service_enabled" \
+        --set releaseOverride="$CI_ENVIRONMENT_SLUG" \
+        --set image.repository="$CI_APPLICATION_REPOSITORY" \
+        --set image.tag="$CI_APPLICATION_TAG" \
+        --set image.pullPolicy=IfNotPresent \
+        --set image.secrets[0].name="$secret_name" \
+        --set application.track="$track" \
+        --set application.database_url="$DATABASE_URL" \
+        --set service.url="$CI_ENVIRONMENT_URL" \
+        --set replicaCount="$replicas" \
+        --set postgresql.enabled="$postgres_enabled" \
+        --set postgresql.nameOverride="postgres" \
+        --set postgresql.postgresUser="$POSTGRES_USER" \
+        --set postgresql.postgresPassword="$POSTGRES_PASSWORD" \
+        --set postgresql.postgresDatabase="$POSTGRES_DB" \
+        --set application.initializeCommand="$DB_INITIALIZE" \
+        --namespace="$KUBE_NAMESPACE" \
+        "$name" \
+        chart/
+
+      echo "Deploying second release..."
+      helm upgrade --reuse-values \
+        --wait \
+        --set application.initializeCommand="" \
+        --set application.migrateCommand="$DB_MIGRATE" \
+        --namespace="$KUBE_NAMESPACE" \
+        "$name" \
+        chart/
+    else
+      echo "Deploying new release..."
+      helm upgrade --install \
+        --wait \
+        --set service.enabled="$service_enabled" \
+        --set releaseOverride="$CI_ENVIRONMENT_SLUG" \
+        --set image.repository="$CI_APPLICATION_REPOSITORY" \
+        --set image.tag="$CI_APPLICATION_TAG" \
+        --set image.pullPolicy=IfNotPresent \
+        --set image.secrets[0].name="$secret_name" \
+        --set application.track="$track" \
+        --set application.database_url="$DATABASE_URL" \
+        --set service.url="$CI_ENVIRONMENT_URL" \
+        --set replicaCount="$replicas" \
+        --set postgresql.enabled="$postgres_enabled" \
+        --set postgresql.nameOverride="postgres" \
+        --set postgresql.postgresUser="$POSTGRES_USER" \
+        --set postgresql.postgresPassword="$POSTGRES_PASSWORD" \
+        --set postgresql.postgresDatabase="$POSTGRES_DB" \
+        --set application.migrateCommand="$DB_MIGRATE" \
+        --namespace="$KUBE_NAMESPACE" \
+        "$name" \
+        chart/
+    fi
+
+    kubectl rollout status -n "$KUBE_NAMESPACE" -w "deployment/$name"
   }
 
   function scale() {
@@ -642,14 +740,16 @@ rollout 100%:
 
   function install_dependencies() {
     apk add -U openssl curl tar gzip bash ca-certificates git
-    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub
-    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk
-    apk add glibc-2.23-r3.apk
-    rm glibc-2.23-r3.apk
+    curl -L -o /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
+    curl -L -O https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.28-r0/glibc-2.28-r0.apk
+    apk add glibc-2.28-r0.apk
+    rm glibc-2.28-r0.apk
 
     curl "https://kubernetes-helm.storage.googleapis.com/helm-v${HELM_VERSION}-linux-amd64.tar.gz" | tar zx
     mv linux-amd64/helm /usr/bin/
+    mv linux-amd64/tiller /usr/bin/
     helm version --client
+    tiller -version
 
     curl -L -o /usr/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl"
     chmod +x /usr/bin/kubectl
@@ -678,6 +778,7 @@ rollout 100%:
       auto_chart=${AUTO_DEVOPS_CHART:-gitlab/auto-deploy-app}
       auto_chart_name=$(basename $auto_chart)
       auto_chart_name=${auto_chart_name%.tgz}
+      auto_chart_name=${auto_chart_name%.tar.gz}
     else
       auto_chart="chart"
       auto_chart_name="chart"
@@ -712,18 +813,33 @@ rollout 100%:
   }
 
   function build() {
-    if [[ -n "$CI_REGISTRY_USER" ]]; then
-      echo "Logging to GitLab Container Registry with CI credentials..."
-      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-      echo ""
-    fi
+    registry_login
 
     if [[ -f Dockerfile ]]; then
       echo "Building Dockerfile-based application..."
-      docker build -t "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" .
+      docker build \
+        --build-arg HTTP_PROXY="$HTTP_PROXY" \
+        --build-arg http_proxy="$http_proxy" \
+        --build-arg HTTPS_PROXY="$HTTPS_PROXY" \
+        --build-arg https_proxy="$https_proxy" \
+        --build-arg FTP_PROXY="$FTP_PROXY" \
+        --build-arg ftp_proxy="$ftp_proxy" \
+        --build-arg NO_PROXY="$NO_PROXY" \
+        --build-arg no_proxy="$no_proxy" \
+        -t "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG" .
     else
       echo "Building Heroku-based application using gliderlabs/herokuish docker image..."
-      docker run -i -e BUILDPACK_URL --name="$CI_CONTAINER_NAME" -v "$(pwd):/tmp/app:ro" gliderlabs/herokuish /bin/herokuish buildpack build
+      docker run -i \
+        -e BUILDPACK_URL \
+        -e HTTP_PROXY \
+        -e http_proxy \
+        -e HTTPS_PROXY \
+        -e https_proxy \
+        -e FTP_PROXY \
+        -e ftp_proxy \
+        -e NO_PROXY \
+        -e no_proxy \
+        --name="$CI_CONTAINER_NAME" -v "$(pwd):/tmp/app:ro" gliderlabs/herokuish /bin/herokuish buildpack build
       docker commit "$CI_CONTAINER_NAME" "$CI_APPLICATION_REPOSITORY:$CI_APPLICATION_TAG"
       docker rm "$CI_CONTAINER_NAME" >/dev/null
       echo ""
@@ -740,10 +856,13 @@ rollout 100%:
     echo ""
   }
 
-  function install_tiller() {
+  function initialize_tiller() {
     echo "Checking Tiller..."
-    helm init --upgrade
-    kubectl rollout status -n "$TILLER_NAMESPACE" -w "deployment/tiller-deploy"
+
+    export HELM_HOST="localhost:44134"
+    tiller -listen ${HELM_HOST} -alsologtostderr > /dev/null 2>&1 &
+    echo "Tiller is listening on ${HELM_HOST}"
+
     if ! helm version --debug; then
       echo "Failed to init Tiller."
       return 1
@@ -806,7 +925,7 @@ rollout 100%:
     fi
 
     if [[ -n "$(helm ls -q "^$name$")" ]]; then
-      helm delete "$name"
+      helm delete --purge "$name"
     fi
   }
 
@@ -825,3 +944,4 @@ pages:
     - public
   only:
   - master
+
