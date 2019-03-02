@@ -2,7 +2,7 @@
   "basics": {
     "name": "Jean-Avit Promis",
     "label": "Ingénieur web & expert e-commerce",
-    "summary": "**Ingénieur avec plus de 10 ans d'experience dans le développement web en société de services informatique**, spécialisé dans l'e-commerce et les architectures web. 34 ans.",
+    "summary": "**Ingénieur avec plus de 12 ans d'experience dans le développement web en société de services informatique**, spécialisé dans l'e-commerce et les architectures web. 35 ans.",
     "website": "https://www.katagena.com/",
     "phone": "###PHONE###",
     "email": "###EMAIL###",
@@ -33,8 +33,8 @@
       "company": "Coop'Alpha",
       "position": "Coopérateur",
       "startDate": "2017-09",
-      "endDate": "2019-01",
-      "summary": "Développement de sites ecommerce magento2.",
+      "endDate": "current",
+      "summary": "Devops ecommerce magento2.",
       "highlights": [
       ]
     },{
@@ -91,8 +91,8 @@
       "studyType": "Ecole d'ingénieurs"
     },
     {
-      "institution": "University of Marne la vallée",
-      "area": "Mathematics",
+      "institution": "University de Marne la vallée",
+      "area": "Mathématiques",
       "startDate": "2004-10",
       "endDate": "2005-06",
       "studyType": "Université"
@@ -106,7 +106,7 @@
     },
     {
       "institution": "Lycée Jean Macé",
-      "area": "Scientific",
+      "area": "Scientifique",
       "startDate": "1998-09",
       "endDate": "2001-06",
       "studyType": "Lycée"
