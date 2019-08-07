@@ -11,4 +11,4 @@ publish:
 	npm install hackmyresume@">=1.3.0 <2" -g
 	wget https://raw.githubusercontent.com/nouchka/docker-hackmyresume/master/start.sh
 	chmod +x ./start.sh
-	export RESUME_FILE=resume.json && export EMAIL=ja.promis@katagena.com && export PHONE=0102030405 && export ADDRESS=Bergerac && export OUTPUT_TEMPLATE=kendall && ./start.sh
+	export RESUME_FILE=resume.json && export EMAIL=ja.promis@katagena.com && export PHONE=0102030405 && export ADDRESS=Bergerac && export OUTPUT_TEMPLATE=kendall && export TEMPLATE_GIT=https://github.com/nouchka/jsonresume-theme-kendall.git && ./start.sh
