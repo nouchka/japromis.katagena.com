@@ -2,7 +2,7 @@
   "basics": {
     "name": "Jean-Avit Promis",
     "label": "PHP DEVELOPER & ECOMMERCE SPECIALIST",
-    "summary": "**Web developer with 10+ years industry experience** specializing in ecommerce and system architecture. 35 years old.",
+    "summary": "**Web developer with 12+ years industry experience** specializing in ecommerce and system architecture. 35 years old.",
     "website": "https://www.katagena.com/",
     "phone": "###PHONE###",
     "email": "###EMAIL###",
@@ -34,14 +34,14 @@
       "position": "Member",
       "startDate": "2017-09",
       "endDate": "current",
-      "summary": "Devops ecommerce magento2.",
+      "summary": "Devops ecommerce magento2 working on AWS infrastructure with Ansible.",
       "highlights": [
       ]
     },{
       "company": "Ninja Labs",
       "position": "Co-founder",
       "startDate": "2016-02",
-      "endDate": "present",
+      "endDate": "2017-09",
       "summary": "System architect of a Symfony project with a Docker Swarm cluster, continuous integration with unit and loading testing.",
       "highlights": [
         "Architecture as code with Ansible"
@@ -138,6 +138,7 @@
         "Docker",
         "Ansible",
         "Linux",
+        "AWS",
         "Continuous Integration",
         "Debian"
       ]

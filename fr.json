@@ -1,7 +1,7 @@
 {
   "basics": {
     "name": "Jean-Avit Promis",
-    "label": "Ingénieur web & expert e-commerce",
+    "label": "Devops expert e-commerce",
     "summary": "**Ingénieur avec plus de 12 ans d'experience dans le développement web en société de services informatique**, spécialisé dans l'e-commerce et les architectures web. 35 ans.",
     "website": "https://www.katagena.com/",
     "phone": "###PHONE###",
@@ -34,7 +34,7 @@
       "position": "Coopérateur",
       "startDate": "2017-09",
       "endDate": "current",
-      "summary": "Devops ecommerce magento2.",
+      "summary": "Devops ecommerce magento2 travaillant sur infrastructure AWS pilotée par Ansible.",
       "highlights": [
       ]
     },{
@@ -119,6 +119,7 @@
         "Docker",
         "Ansible",
         "Linux",
+        "AWS",
         "Intégration continue",
         "Gitlab-CI",
         "Debian"
