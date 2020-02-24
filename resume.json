@@ -2,7 +2,7 @@
   "basics": {
     "name": "Jean-Avit Promis",
     "label": "PHP DEVELOPER & ECOMMERCE SPECIALIST",
-    "summary": "**Web developer with 12+ years industry experience** specializing in ecommerce and system architecture. 35 years old.",
+    "summary": "**Web developer with 13+ years industry experience** specializing in ecommerce and system architecture. 35 years old.",
     "website": "https://www.katagena.com/",
     "phone": "###PHONE###",
     "email": "###EMAIL###",
@@ -125,7 +125,8 @@
     {
       "name": "Framework",
       "keywords": [
-        "Symfony2",
+        "Symfony",
+        "Node.js",
         "jQuery",
         "Zend",
         "Struts",
@@ -136,17 +137,20 @@
       "name": "System",
       "keywords": [
         "Docker",
+        "Serverless framework",
         "Ansible",
         "Linux",
         "AWS",
         "Continuous Integration",
+        "Gitlab-CI",
+        "Github Actions",
         "Debian"
       ]
     },
     {
       "name": "Softwares",
       "keywords": [
-        "Magento",
+        "Magento2",
         "Jahia",
         "Akeneo"
       ]
