@@ -1,6 +1,6 @@
 [build]
   command = "make publish"
-  publish = "public"
+  publish = "."
 [[headers]]
   for = "/*"
   [headers.values]
