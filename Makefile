@@ -8,6 +8,8 @@ build:
 	cp /tmp/resume/index.pdf ~/Desktop/CV.pdf
 
 publish:
+	mkdir -p public/
+	cd public/
 	npm install hackmyresume@">=1.3.0 <2" -g
 	wget https://raw.githubusercontent.com/nouchka/docker-hackmyresume/master/start.sh
 	chmod +x ./start.sh
