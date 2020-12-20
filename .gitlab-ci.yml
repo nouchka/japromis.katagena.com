@@ -1,7 +1,5 @@
 include:
-  - project: 'katagena/projects'
-    ref: master
-    file: 'playbooks/roles/templating/templates/generic/gitlabci.auto-devops.yml'
+  - template: Auto-DevOps.gitlab-ci.yml
 
 pages:
   stage: build
