@@ -2,7 +2,7 @@
   "basics": {
     "name": "Jean-Avit Promis",
     "label": "DEVOPS",
-    "summary": "**Web developer with 13+ years industry experience** specializing in ecommerce and system architecture. 35 years old.",
+    "summary": "**Web developer with 15+ years industry experience** specializing in ecommerce and system architecture. 37 years old.",
     "website": "https://www.katagena.com/",
     "phone": "###PHONE###",
     "email": "###EMAIL###",
@@ -31,11 +31,14 @@
   },
   "work": [{
       "company": "Coop'Alpha",
-      "position": "Member",
+      "position": "Co-operator",
       "startDate": "2017-09",
       "endDate": "current",
-      "summary": "Devops ecommerce magento2 working on AWS infrastructure with Ansible.",
+      "summary": "Devops ecommerce magento2 working on AWS infrastructure with Ansible/Docker/GithubAction. Magento2 developper for medium/large companies.",
       "highlights": [
+        "Architecture restructuring with containers",
+        "Delivery and configuration Automation",
+        "Serverless application design"
       ]
     },{
       "company": "Ninja Labs",
@@ -141,7 +144,7 @@
         "Ansible",
         "Linux",
         "AWS",
-        "Continuous Integration",
+        "CI",
         "Gitlab-CI",
         "Github Actions",
         "Debian"
