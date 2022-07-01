@@ -1,7 +1,8 @@
 include:
-  - template: Auto-DevOps.gitlab-ci.yml
+  - project: 'katagena/templates'
+    file: 'ci/global.yml'
 
-pages:
+build:
   stage: build
   image: nouchka/japromis:latest
   script:
@@ -12,4 +13,4 @@ pages:
     paths:
     - public
   rules:
-    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
