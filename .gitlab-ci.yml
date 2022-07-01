@@ -6,7 +6,8 @@ build:
   stage: build
   image: node:latest
   script:
-    - apk --update add make
+    - apt-get update
+    - apt-get install -y make
     - make publish
     - mkdir public/
     - cp /usr/share/nginx/html/index.html public/index.html
