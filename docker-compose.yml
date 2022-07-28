@@ -1,9 +1,0 @@
-version: '2'
-
-services:
-  resume:
-    image: nouchka/japromis
-    build: .
-    container_name: "resume"
-    ports:
-      - "8201:80"
