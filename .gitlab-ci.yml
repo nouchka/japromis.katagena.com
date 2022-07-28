@@ -18,13 +18,13 @@ generate-resume:
   script:
     - mkdir -p public/ pdf/
     - cp favicon.ico public/
+    - cp resume.json en.json
     - /start.sh
     - cp index.html public/
     - export PHONE=${PROFESSIONNAL_PHONE}
-    - export RESUME_FILE=resume.json
     - /start.sh
     - cp index.pdf pdf/japromis-cv.pdf
-    - export RESUME_FILE=fr.json
+    - export RESUME_FILE=en.json
     - /start.sh
     - cp index.pdf pdf/japromis-resume.pdf
   artifacts:
