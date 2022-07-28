@@ -2,16 +2,33 @@ include:
   - project: 'katagena/templates'
     file: 'ci/global.yml'
 
-build:
+variables:
+  EMAIL: "ja.promis@katagena.com"
+  PHONE: "0102030405"
+  ADDRESS: "Bergerac"
+  OUTPUT_TEMPLATE: "kendall"
+  TEMPLATE_GIT: "https://github.com/nouchka/jsonresume-theme-kendall.git"
+  RESUME_FILE: "fr.json"
+
+generate-resume:
   stage: build
-  image: node:latest
+  image:
+    name: nouchka/hackmyresume
+    entrypoint: [""]
   script:
-    - apt-get update
-    - apt-get install -y make
-    - make publish
-    - ls -al public/
+    - mkdir -p public/ pdf/
+    - cp favicon.ico public/
+    - /start.sh
+    - ls -al
+    - cp index.html public/
+    - cp index.pdf pdf/japromis-cv.pdf
+    - export RESUME_FILE=resume.json
+    - /start.sh
+    - ls -al
+    - cp index.pdf pdf/japromis-resume.pdf
   artifacts:
     paths:
     - public
+    - pdf
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
