@@ -20,11 +20,10 @@ generate-resume:
     - cp favicon.ico public/
     - /start.sh
     - cp index.html public/
+    - rm index.pdf
     - export PHONE=${PROFESSIONNAL_PHONE}
     - /start.sh
     - cp index.pdf pdf/japromis-cv.pdf
-    - printenv
-    - export PHONE=${PROFESSIONNAL_PHONE}
     - export RESUME_FILE=resume.json
     - /start.sh
     - cp index.pdf pdf/japromis-resume.pdf
