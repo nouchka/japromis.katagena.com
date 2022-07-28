@@ -4,7 +4,7 @@ include:
 
 variables:
   EMAIL: "ja.promis@katagena.com"
-  PHONE: "0102030405"
+  PHONE: "xxxxxxxxxx"
   ADDRESS: "Bergerac"
   OUTPUT_TEMPLATE: "kendall"
   TEMPLATE_GIT: "https://github.com/nouchka/jsonresume-theme-kendall.git"
@@ -19,12 +19,12 @@ generate-resume:
     - mkdir -p public/ pdf/
     - cp favicon.ico public/
     - /start.sh
-    - ls -al
     - cp index.html public/
+    - export PHONE=${PROFESSIONNAL_PHONE}
+    - /start.sh
     - cp index.pdf pdf/japromis-cv.pdf
     - export RESUME_FILE=resume.json
     - /start.sh
-    - ls -al
     - cp index.pdf pdf/japromis-resume.pdf
   artifacts:
     paths:
