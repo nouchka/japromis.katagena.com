@@ -38,7 +38,8 @@
       "highlights": [
         "Architecture restructuring with containers",
         "Delivery and configuration Automation",
-        "Serverless application design"
+        "Serverless application design",
+        "Platform monitoring"
       ]
     },{
       "company": "Ninja Labs",
@@ -139,7 +140,8 @@
         "CI",
         "Gitlab-CI",
         "Github Actions",
-        "Debian"
+        "Debian",
+        "Prometheus"
       ]
     },
     {
