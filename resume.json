@@ -2,7 +2,7 @@
   "basics": {
     "name": "Jean-Avit Promis",
     "label": "DEVOPS",
-    "summary": "**Web developer with 15+ years industry experience** specializing in ecommerce and system architecture. 39 years old.",
+    "summary": "**Web developer with 19+ years industry experience** specializing in ecommerce and system architecture. 41 years old.",
     "website": "https://www.katagena.com/",
     "phone": "###PHONE###",
     "email": "###EMAIL###",
@@ -73,14 +73,6 @@
         "Developped an live auction for real estate.",
         "First technical lead on a project."
       ]
-    },
-    {
-      "company": "Business en ligne",
-      "website": "http://www.businessenligne.fr/",
-      "position": "Developer",
-      "startDate": "2006-04",
-      "endDate": "2006-08",
-      "summary": "PHP developer. Created an online training platform."
     },
     {
       "company": "Butler Gallery",
