@@ -1,0 +1,13 @@
+services:
+  hackmyresume:
+    image: nouchka/hackmyresume-web
+    volumes:
+      - ./long.json:/usr/share/nginx/html/resume.json:ro
+    environment:
+      - OUTPUT_TEMPLATE=kendall
+      - TEMPLATE_GIT=https://github.com/nouchka/jsonresume-theme-kendall.git
+      - PHONE=+33602030405
+      - EMAIL=docker@katagena.com
+      - ADDRESS=25 Rue Delphin Loche
+    ports:
+      - "8005:80"

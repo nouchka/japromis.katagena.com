@@ -1,0 +1,264 @@
+{
+  "basics": {
+    "name": "Jean-Avit Promis",
+    "label": "Développeur PHP & Devops, expert e-commerce",
+    "summary": "**Ingénieur avec plus de 19 ans d'experience dans le développement web en société de services informatique**, spécialisé dans l'e-commerce et les architectures web. 41 ans.",
+    "website": "https://www.sdsix.org/",
+    "phone": "###PHONE###",
+    "email": "###EMAIL###",
+    "picture": "https://raw.githubusercontent.com/nouchka/japromis.katagena.com/master/picture.jpg",
+    "location": {
+      "address": "Jean-Avit Promis\n###ADDRESS###",
+      "postalCode": "24100",
+      "city": "Bergerac",
+      "countryCode": "FR",
+      "region": "Dordogne"
+    },
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "nouchka",
+        "url": "https://github.com/nouchka",
+        "iconClass": "fa fa-github-square"
+      },
+      {
+        "network": "Linkedin",
+        "username": "japromis",
+        "url": "https://fr.linkedin.com/in/japromis",
+        "iconClass": "fa fa-linkedin-square"
+      }
+    ]
+  },
+  "work": [
+    {
+      "company": "Coop'Alpha - Cleverage",
+      "position": "Freelance",
+      "startDate": "2021-11",
+      "endDate": "2025-02",
+      "summary": "Lead tech magento2 pour 3 clients en TMA avec développements applicatif et devops",
+      "highlights": [
+        "Amélioration stack docker locale",
+        "Déploiement ansible avec Gitlab-ci",
+        "Mise en place de monitoring avec exporters Prometheus, logs Loki/Promtail et dashboards Grafana",
+        "Création d'un module de logs centralisé pilotable via le back-office",
+        "Installation d'un système de dump de base de données hébergé sur docker registry",
+        "Création de collection de tests API Bruno",
+        "Configuration et tunning ElasticSearch",
+        "Mise à jour Magento2 et modules",
+        "Migration version mineure Magento2 et majeure PHP",
+        "Intégration avec des services tiers: Akineo, Hubspot, Cegid, Brevo, PSPs",
+        "Suivi et coordination avec les équipes métiers",
+        "Mise en place d'un programme de fidélité"
+      ]
+    },
+    {
+      "company": "Coop'Alpha - Léo & Léa",
+      "position": "Freelance",
+      "startDate": "2020-12",
+      "endDate": "2021-10",
+      "summary": "Devops ecommerce magento2 travaillant sur infrastructure AWS avec Ansible/Docker/GithubAction/Lambda.",
+      "highlights": [
+        "Refonte complète de l'architecture serveur avec Docker",
+        "Automatisation des procéssus de livraison avec Github Actions",
+        "Configuration des environnements avec Ansible",
+        "Serverless sur AWS Lambda",
+        "Architecture répartie avec loadbalancer AWS, stockage S3",
+        "Migration d'une architecture monolithique vers du serverless avec maintien du service"
+      ]
+    },
+    {
+      "company": "Coop'Alpha - Tangkoko",
+      "position": "Freelance",
+      "startDate": "2020-06",
+      "endDate": "2020-09",
+      "summary": "Développement magento2 sur 2 sites de vente.",
+      "highlights": [
+        "Création magento2 from scratch",
+        "Intégration du module BlackBird ContentManager",
+        "Refonte knockout complète d'un tunnel de vente"
+      ]
+    },
+    {
+      "company": "Coop'Alpha - Léo & Léa",
+      "position": "Freelance",
+      "startDate": "2019-03",
+      "endDate": "2020-02",
+      "summary": "Développement magento2 sur un site de vente par abonnement.",
+      "highlights": [
+        "Developpement magento2: templating, controller, observer, etc...",
+        "Coordination sur plusieurs fuseaux horaires et en anglais"
+      ]
+    },
+    {
+      "company": "Coop'Alpha - Technology Everywhere",
+      "position": "Freelance",
+      "startDate": "2018-02",
+      "endDate": "2019-02",
+      "summary": "Développement magento2 dans le cadre de la TMA sur 3 grands comptes.",
+      "highlights": [
+        "Travail dans un contexte international avec des équipes Off-shore",
+        "Encadrement de developpeurs juniors"
+      ]
+    },
+    {
+      "company": "Ninja Labs",
+      "position": "Co-fondateur",
+      "startDate": "2016-02",
+      "endDate": "2017-09",
+      "summary": "Responsable architecture d'un projet Symfony.",
+      "highlights": [
+        "Pilotage automatisé des serveurs avec Ansible et Gitlab-ci",
+        "Test de montée en charger avec Gatling",
+        "Mise en place d'un cluser Swarm puis Kubernetes en bare-metal",
+        "Mise en place du monitoring"
+      ]
+    },
+    {
+      "company": "Smile Sud-Ouest",
+      "website": "http://www.smile.fr/",
+      "position": "Ingénieur et expert technique",
+      "startDate": "2010-09",
+      "endDate": "2016-09",
+      "summary": "A travaillé en tant que développeur magento et expert technique lors de la création de site e-commerce ou leur maintenance. En tant que chef de projet j'ai eu la charge de la relation client, la gestion du planning de livraison, des developpements, des équipes et de la partie conseil. En tant que developpeur j'ai réalisé un store locator, un système de réservation, un plan SEO, des intégrations graphiques, des créations de modules Back Office, etc... Environnement technique: Magento, Solr, ElasticSearch, MongoDB, Percona, Redis, load-balanced servers. Clients: Krys, Le comptoir santé (Cdiscount), Cultura, Editions législatives, Chantelle, Chantelle US, Comtesse du Barry, etc...",
+      "highlights": [
+        "Gestion d'une équipe de 5 personnes",
+        "Projet sur un site e-commerce à plus de 10 millions de produits"
+      ]
+    },
+    {
+      "company": "Smile Paris",
+      "website": "http://www.smile.fr/",
+      "position": "Ingénieur et chef de projet technique",
+      "startDate": "2007-03",
+      "endDate": "2010-09",
+      "summary": "A travaillé en tant que developpeur web JAVA et chef de projet technique. J'ai réalisé des écrans, mis en place des workflows de contribution, des flux d'import de données, intégration de Google maps, etc... Environnement technique: Jahia, J2EE, LDAP, SSO. Clients: Notaires de France (Immobilier), Gallimard (Editeur), Bureau Veritas (Certification), BNP (Banque), AG2R (Assurance), Sanef (Autoroute), Aprionis (Retraite), Lyonnaise des eaux (Eau), etc...",
+      "highlights": [
+        "Mise en place d'un système d'enchères en temps réel.",
+        "Première expérience en tant que chef de projet technique."
+      ]
+    },
+    {
+      "company": "Butler Gallery",
+      "website": "http://www.butlergallery.com/",
+      "position": "Développeur",
+      "startDate": "2005-07",
+      "endDate": "2005-08",
+      "summary": "Développeur PHP. Création d'un site web contribuable.",
+      "highlights": [
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "ESIGETEL, École supérieure d'ingénieurs en informatique et génie des télécommunications",
+      "area": "SIR",
+      "startDate": "2004-11",
+      "endDate": "2007-02",
+      "studyType": "Ecole d'ingénieurs"
+    },
+    {
+      "institution": "University de Marne la vallée",
+      "area": "Mathématiques",
+      "startDate": "2004-10",
+      "endDate": "2005-06",
+      "studyType": "Université"
+    },
+    {
+      "institution": "Lycée Jean Macé, Niort & Lycée Jean Dautet, La Rochelle",
+      "area": "Bac S & MPSI/PSI",
+      "startDate": "1998-09",
+      "endDate": "2004-06",
+      "studyType": "Lycée & Classes préparatoires"
+    }
+  ],
+  "skills": [
+    {
+      "name": "Framework",
+      "keywords": [
+        "Symfony",
+        "Node.js",
+        "jQuery",
+        "Zend",
+        "Struts",
+        "AngularJS"
+      ]
+    },
+    {
+      "name": "System",
+      "keywords": [
+        "Docker",
+        "Serverless framework",
+        "Ansible",
+        "Linux",
+        "AWS",
+        "CI",
+        "Gitlab-CI",
+        "Github Actions",
+        "Debian"
+      ]
+    },
+    {
+      "name": "Softwares",
+      "keywords": [
+        "Magento2",
+        "Jahia",
+        "Akeneo"
+      ]
+    },
+    {
+      "name": "Langages",
+      "keywords": [
+        "PHP",
+        "Javascript",
+        "JAVA",
+        ".net"
+      ]
+    }
+  ],
+  "interests": [
+    {
+      "name": "Voyages",
+      "summary": "",
+      "keywords": [
+        
+      ]
+    },
+    {
+      "name": "Permaculture"
+    },
+    {
+      "name": "Rugby",
+      "summary": ""
+    },
+    {
+      "name": "Architecture"
+    },
+    {
+      "name": "Musées"
+    }
+  ],
+  "languages": [
+    {
+      "language": "Français",
+      "level": "Langue natale",
+      "fluency": "Langue natale"
+    },
+    {
+      "language": "Anglais",
+      "level": "TOEIC 915",
+      "fluency": "TOEIC 915"
+    },
+    {
+      "language": "Allemand",
+      "level": "Modéré",
+      "fluency": "Modéré",
+      "years": 7
+    },
+    {
+      "language": "Suèdois",
+      "level": "Débutant",
+      "fluency": "Débutant"
+    }
+  ]
+}
+
